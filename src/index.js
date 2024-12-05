@@ -6,7 +6,6 @@ import 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import 'admin-lte/dist/js/adminlte.min';
 
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
