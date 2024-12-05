@@ -1,14 +1,28 @@
 {
-  "name": "admin",
+  "name": "bobjo_front",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "admin-lte": "^3.2.0",
+    "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.6",
+    "daterangepicker": "^3.1.0",
+    "jquery": "^3.7.1",
+    "jquery-ui-dist": "^1.13.3",
+    "moment": "^2.30.1",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.5",
+    "react-calendar": "^5.1.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
     "react-scripts": "5.0.1",
+    "styled-components": "^6.1.13",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -34,5 +48,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "husky": "^9.1.6"
   }
 }
