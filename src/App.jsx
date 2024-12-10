@@ -8,7 +8,7 @@ import ManageReservations from './pages/ManageReservations';
 import ManageReviews from './pages/ManageReviews';
 import ManageReports from './pages/ManageReports';
 import ManageBoards from './pages/ManageBoards';
-
+import 'admin-lte/dist/css/adminlte.min.css';
 function App() {
   return (
     <Router>
