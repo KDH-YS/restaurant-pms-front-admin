@@ -9,7 +9,7 @@ const ReservationList = () => {
   const { currentPage, setCurrentPage, setTotalPages } = usePaginationStore();
   const itemsPerPage = 10;
   const { restaurant } = restaurantStore();
-  
+
   // 모달 관련 상태
   const [showModal, setShowModal] = useState(false);
   const [editingReservation, setEditingReservation] = useState(null);
@@ -20,11 +20,11 @@ const ReservationList = () => {
 
   const fetchReservations = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${restaurant.restaurantId}?page=${currentPage}&size=${itemsPerPage}`);
+      const response = await fetch(
+        `http://localhost:8080/api/reservations/manager/${restaurant.restaurantId}?page=${currentPage}&size=${itemsPerPage}`
+      );
       const data = await response.json();
       setReservations(data.list);
-      console.log(reservations);
-      console.log(restaurant);    
       setTotalPages(Math.ceil(data.total / itemsPerPage));
     } catch (error) {
       console.error('예약 데이터 가져오기 오류:', error);
@@ -38,12 +38,13 @@ const ReservationList = () => {
 
   const handleDelete = async (reservationId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/reservations/manager/${reservationId}`, {
-        method: 'DELETE',
-        headers:{
-          'Content-Type': 'application/json'
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/reservations/manager/${reservationId}`,
+        {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       if (response.ok) {
         alert('예약이 취소되었습니다.');
@@ -67,10 +68,10 @@ const ReservationList = () => {
   };
 
   const handleSaveEdit = () => {
-    // 여기에 수정된 예약 정보를 저장하는 로직을 구현할 수 있습니다.
     console.log('수정된 예약:', editingReservation);
     handleCloseModal();
   };
+
   const statusLabels = {
     CANCELREQUEST: '취소 요청',
     COMPLETE: '방문 완료',
@@ -78,6 +79,7 @@ const ReservationList = () => {
     PENDING: '결제 대기중',
     NOSHOW: '노쇼',
   };
+
   return (
     <Container className="mt-4">
       <h1 className="mb-4">{restaurant.name} 예약 관리</h1>
@@ -94,32 +96,40 @@ const ReservationList = () => {
           </tr>
         </thead>
         <tbody>
-          {reservations.map((reservation) => (
-            <tr key={reservation.reservationId}>
-              <td>{reservation.reservationId}</td>
-              <td>{reservation.user.email}</td>
-              <td>{reservation.reservationTime}</td>
-              <td>{reservation.user.phone}</td>
-              <td>{reservation.numberOfPeople}</td>
-              <td>{statusLabels[reservation.status]}</td>
-              <td>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => handleEdit(reservation)}
-                >
-                  수정
-                </Button>{' '}
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(reservation.reservationId)}
-                >
-                  삭제
-                </Button>
+          {reservations.length === 0 ? (
+            <tr>
+              <td colSpan="7" className="text-center">
+                현재 예약이 없습니다.
               </td>
             </tr>
-          ))}
+          ) : (
+            reservations.map((reservation) => (
+              <tr key={reservation.reservationId}>
+                <td>{reservation.reservationId}</td>
+                <td>{reservation.user.email}</td>
+                <td>{reservation.reservationTime}</td>
+                <td>{reservation.user.phone}</td>
+                <td>{reservation.numberOfPeople}</td>
+                <td>{statusLabels[reservation.status]}</td>
+                <td>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => handleEdit(reservation)}
+                  >
+                    수정
+                  </Button>{' '}
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDelete(reservation.reservationId)}
+                  >
+                    삭제
+                  </Button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </Table>
       <PaginationComponent onPageChange={handlePageChange} />
@@ -135,7 +145,12 @@ const ReservationList = () => {
               <Form.Control
                 type="text"
                 value={editingReservation?.status || ''}
-                onChange={(e) => setEditingReservation({...editingReservation, status: e.target.value})}
+                onChange={(e) =>
+                  setEditingReservation({
+                    ...editingReservation,
+                    status: e.target.value,
+                  })
+                }
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -144,15 +159,29 @@ const ReservationList = () => {
                 as="textarea"
                 rows={3}
                 value={editingReservation?.request || ''}
-                onChange={(e) => setEditingReservation({...editingReservation, request: e.target.value})}
+                onChange={(e) =>
+                  setEditingReservation({
+                    ...editingReservation,
+                    request: e.target.value,
+                  })
+                }
               />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>예약 시간</Form.Label>
               <Form.Control
                 type="datetime-local"
-                value={editingReservation?.reservationTime ? editingReservation.reservationTime.slice(0, 16) : ''}
-                onChange={(e) => setEditingReservation({...editingReservation, reservationTime: e.target.value})}
+                value={
+                  editingReservation?.reservationTime
+                    ? editingReservation.reservationTime.slice(0, 16)
+                    : ''
+                }
+                onChange={(e) =>
+                  setEditingReservation({
+                    ...editingReservation,
+                    reservationTime: e.target.value,
+                  })
+                }
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -160,7 +189,12 @@ const ReservationList = () => {
               <Form.Control
                 type="number"
                 value={editingReservation?.numberOfPeople || ''}
-                onChange={(e) => setEditingReservation({...editingReservation, numberOfPeople: parseInt(e.target.value)})}
+                onChange={(e) =>
+                  setEditingReservation({
+                    ...editingReservation,
+                    numberOfPeople: parseInt(e.target.value),
+                  })
+                }
               />
             </Form.Group>
           </Form>
@@ -179,4 +213,3 @@ const ReservationList = () => {
 };
 
 export default ReservationList;
-
