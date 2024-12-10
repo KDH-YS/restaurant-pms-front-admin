@@ -108,7 +108,7 @@ function AdminReview() {
 
           {/* 페이지네이션 */}
           <div className="pagination">
-            {Array.from({ length: totalPages }, (_, i) => (
+            {Array.from({ length: 10 }, (_, i) => (
               <Button
                 key={i + 1}
                 variant={pageNumber === i + 1 ? 'primary' : 'secondary'}
