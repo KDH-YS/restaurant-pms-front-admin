@@ -1,0 +1,41 @@
+/* 기본 스타일 */
+.container {
+  margin-left: 20px;
+}
+body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-sidebar {
+  position: fixed; /* 항상 고정 */
+  top: 0;
+  left: 0;
+  width: 250px; /* 고정 너비 */
+  height: 100%; /* 전체 높이 */
+  background-color: #343a40; /* 어두운 배경 */
+  z-index: 1040; /* 다른 요소 위에 위치 */
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* 반응형: 768px ~ 991.98px */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-sidebar {
+    margin-left: 0; /* 화면 안쪽으로 배치 */
+  }
+
+  body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper {
+    margin-left: 250px; /* 사이드바 너비만큼 마진 */
+  }
+
+  /* 사이드바 숨김 상태 */
+  body.sidebar-collapsed .main-sidebar {
+    margin-left: -250px; /* 사이드바 숨김 */
+  }
+
+  body.sidebar-collapsed .content-wrapper {
+    margin-left: 0; /* 콘텐츠 확장 */
+  }
+}
+
+/* 반응형: 992px 이상 */
+@media (min-width: 992px) {
+  .main-sidebar {
+    margin-left: 0; /* 항상 왼쪽 고정 */
+  }
+}

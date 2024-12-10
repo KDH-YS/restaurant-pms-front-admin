@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // React Router를 사용하여 페이지 이동을 처리
+import '../css/App.css'; // 스타일 적용
 
 const Sidebar = () => {
   return (
@@ -82,7 +83,7 @@ const Sidebar = () => {
                 <p>게시판 관리</p>
               </Link>
             </li>
-
+            
           </ul>
         </nav>
       </div>
