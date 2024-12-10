@@ -13,6 +13,7 @@ export function AdminReviewList() {
   const [showReviewsCount, setShowReviewsCount] = useState(5);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [reviewToDelete, setReviewToDelete] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchRestaurantDetails = async () => {
     try {
@@ -30,6 +31,7 @@ export function AdminReviewList() {
   };
 
   const fetchReviews = async () => {
+    setLoading(true); // 로딩 시작
     try {
       const response = await fetch(
         `http://localhost:8080/api/restaurants/${restaurantId}/reviews?userId=1`
@@ -46,6 +48,8 @@ export function AdminReviewList() {
       }
     } catch (error) {
       console.error("리뷰 정보를 가져오는 중 오류 발생:", error);
+    } finally {
+      setLoading(false); // 로딩 종료
     }
   };
 
@@ -111,7 +115,7 @@ export function AdminReviewList() {
   }, []);
 
   return (
-    <Container className="mt-4">
+    <Container>
       <Row className="mb-4 justify-content-center">
         <Col md={8} className="text-center">
           <img
@@ -121,7 +125,7 @@ export function AdminReviewList() {
                 : "https://via.placeholder.com/100x100"
             }
             alt="Restaurant"
-            className="img-fluid rounded-circle"
+            className="mt-4 img-fluid rounded-circle"
           />
           <h2>{restaurant.name}</h2>
           <p>
@@ -132,6 +136,13 @@ export function AdminReviewList() {
       <Row className="js-reviews">
         <Col>
           <h3 className="js-section-title">리뷰</h3>
+        {loading ? (
+              <div className="text-center">
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden"></span>
+                </div>
+              </div>
+            ) : (
           <ListGroup>
             {reviews.slice(0, showReviewsCount).map((review) => (
               <ListGroup.Item key={review.reviewId} className="js-review-item">
@@ -158,6 +169,7 @@ export function AdminReviewList() {
               </ListGroup.Item>
             ))}
           </ListGroup>
+        )}
           {reviews.length > showReviewsCount && (
             <Button
               variant="primary"

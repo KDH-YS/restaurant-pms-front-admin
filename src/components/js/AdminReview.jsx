@@ -45,9 +45,9 @@ function AdminReview() {
 
   return (
     <Container fluid>
-      <Row className="my-4">
+      <Row>
         <Col md={12}>
-          <h3 className="mb-4">리뷰 관리</h3>
+          <h3 className="mt-4">리뷰 관리</h3>
           <Form className="d-flex mb-4">
             <Form.Control
               type="text"
