@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import "../../css/Review.css";
 
 function AdminReview() {
-  const [restaurants, setRestaurants] = useState([]); // 현재 페이지 레스토랑 목록
-  const [totalPages, setTotalPages] = useState(0); // 전체 페이지 수
-  const [pageNumber, setPageNumber] = useState(1); // 현재 페이지 번호
-  const [keyword, setKeyword] = useState(''); // 검색 키워드
+  const [restaurants, setRestaurants] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const fetchRestaurants = async (page = 1, keyword = '') => {
@@ -17,9 +18,9 @@ function AdminReview() {
       );
       if (response.ok) {
         const data = await response.json();
-        setRestaurants(data.content); // 현재 페이지의 레스토랑 배열
-        setTotalPages(data.totalPages); // 전체 페이지 수
-        setPageNumber(data.pageNumber); // 현재 페이지 번호
+        setRestaurants(data.content);
+        setTotalPages(data.totalPages);
+        setPageNumber(page); // 현재 페이지 업데이트
       } else {
         console.error("가게 정보를 가져오는 데 실패했습니다.");
       }
@@ -31,7 +32,7 @@ function AdminReview() {
   };
 
   const handleSearch = () => {
-    fetchRestaurants(1, keyword); // 검색 시 첫 번째 페이지로 이동
+    fetchRestaurants(1, keyword); // 검색 시 첫 페이지로 이동
   };
 
   const handlePageChange = (newPage) => {
@@ -39,13 +40,13 @@ function AdminReview() {
   };
 
   useEffect(() => {
-    fetchRestaurants(); // 컴포넌트 마운트 시 데이터 가져오기
+    fetchRestaurants(); // 초기 데이터 로드
   }, []);
 
   return (
     <Container fluid>
       <Row className="my-4">
-        <Col md={10}>
+        <Col md={12}>
           <h3 className="mb-4">리뷰 관리</h3>
           <Form className="d-flex mb-4">
             <Form.Control
@@ -64,7 +65,11 @@ function AdminReview() {
           </Form>
 
           {loading ? (
-            <div>로딩 중...</div>
+            <div className="text-center">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden"></span>
+              </div>
+            </div>
           ) : (
             <div className="table-container">
               <div className="table-header">
@@ -85,9 +90,11 @@ function AdminReview() {
                       <div>{item.roadAddr || item.jibunAddr || 'N/A'}</div>
                       <div>{item.phone || 'N/A'}</div>
                       <div className="button-group">
-                        <Button variant="primary" className="mb-2">
-                          리뷰관리
-                        </Button>
+                        <Link to={`/reviewList`}>
+                          <Button variant="primary" className="mb-2">
+                            리뷰관리
+                          </Button>
+                        </Link>
                         <Button variant="danger">신고관리</Button>
                       </div>
                     </div>
@@ -101,7 +108,7 @@ function AdminReview() {
 
           {/* 페이지네이션 */}
           <div className="pagination">
-            {Array.from({ length: 10 }, (_, i) => (
+            {Array.from({ length: totalPages }, (_, i) => (
               <Button
                 key={i + 1}
                 variant={pageNumber === i + 1 ? 'primary' : 'secondary'}
