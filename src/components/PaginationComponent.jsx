@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pagination } from 'react-bootstrap';
 import usePaginationStore from 'store/usePaginationStore';
+import './PaginationComponent.css'
 
 // PaginationComponent는 페이지네이션 UI를 렌더링하고 동작을 제어하는 컴포넌트입니다.
 const PaginationComponent = ({ onPageChange }) => {

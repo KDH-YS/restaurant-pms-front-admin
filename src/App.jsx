@@ -8,7 +8,9 @@ import ManageReservations from './pages/ManageReservations';
 import ManageReviews from './pages/ManageReviews';
 import ManageReports from './pages/ManageReports';
 import ManageBoards from './pages/ManageBoards';
+import Reservationlistpage from 'pages/ReservationListpage';
 import 'admin-lte/dist/css/adminlte.min.css';
+
 function App() {
   return (
     <Router>
@@ -23,6 +25,7 @@ function App() {
             <Route path="/manage-reviews" element={<ManageReviews />} />
             <Route path="/manage-reports" element={<ManageReports />} />
             <Route path="/manage-boards" element={<ManageBoards />} />
+            <Route path="/manager-reservations/reservations" element={<Reservationlistpage />} />
           </Routes>
         </div>
       </div>
@@ -31,3 +34,4 @@ function App() {
 }
 
 export default App;
+
