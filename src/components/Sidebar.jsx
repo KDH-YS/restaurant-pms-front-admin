@@ -61,14 +61,6 @@ const Sidebar = () => {
                 <p>리뷰 관리</p>
               </Link>
             </li>
-          </ul>
-        </nav>
-      </div>
-
-      {/* 추가 사이드바 메뉴 */}
-      <div className="sidebar">
-        <nav className="mt-2">
-          <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             {/* 대시보드 */}
             <li className="nav-item">
               <Link to="/manage-reports" className="nav-link">
@@ -83,7 +75,6 @@ const Sidebar = () => {
                 <p>게시판 관리</p>
               </Link>
             </li>
-            
           </ul>
         </nav>
       </div>
