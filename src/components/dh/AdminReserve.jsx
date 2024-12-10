@@ -40,9 +40,11 @@ const AdminReserve = () => {
   };
 
   const currentRestaurants = restaurants.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    ((currentPage - 1) % 5) * itemsPerPage, 
+    ((currentPage - 1) % 5 + 1) * itemsPerPage
   );
+
+
   const selectRestaurants= (restaurants) =>{
     setRestaurant(restaurants);
     navigator("/manager-reservations/reservations")
