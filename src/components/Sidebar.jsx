@@ -61,13 +61,6 @@ const Sidebar = () => {
                 <p>리뷰 관리</p>
               </Link>
             </li>
-            {/* 대시보드 */}
-            <li className="nav-item">
-              <Link to="/manage-reports" className="nav-link">
-                <i className="nav-icon fas fa-tachometer-alt" />
-                <p>신고 관리</p>
-              </Link>
-            </li>
             {/* 위젯 */}
             <li className="nav-item">
               <Link to="/manage-boards" className="nav-link">

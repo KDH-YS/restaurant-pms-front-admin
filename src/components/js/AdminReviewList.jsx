@@ -2,18 +2,22 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, ListGroup, Modal } from "react-bootstrap";
 import "../../css/ReviewList.css";
 
+import { restaurantStore } from '../../store/restaurantStore';
+import { useParams } from "react-router-dom";
+
 export function AdminReviewList() {
   const [reviews, setReviews] = useState([]);
   const [reviewImages, setReviewImages] = useState({});
-  const [restaurant, setRestaurant] = useState({});
   const [restaurantImg, setRestaurantImg] = useState([]);
   const [users, setUsers] = useState({});
-  const restaurantId = 1;
 
   const [showReviewsCount, setShowReviewsCount] = useState(5);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   const [loading, setLoading] = useState(false);
+  
+  const { restaurant, setRestaurant } = restaurantStore();
+  const { restaurantId } = useParams();
 
   const fetchRestaurantDetails = async () => {
     try {
@@ -74,7 +78,7 @@ export function AdminReviewList() {
       console.error("유저 정보를 가져오는 중 오류 발생:", error);
     }
   };
-  
+
   const handleDeleteClick = (reviewId) => {
     setReviewToDelete(reviewId);
     setShowDeleteModal(true);
@@ -112,12 +116,12 @@ export function AdminReviewList() {
     fetchRestaurantDetails();
     fetchReviews();
     fetchUsers(); // 유저 데이터 가져오기
-  }, []);
+  }, [restaurant.restaurantId]);
 
   return (
     <Container>
       <Row className="mb-4 justify-content-center">
-        <Col md={8} className="text-center">
+        <Col md={3} className="text-center">
           <img
             src={
               restaurantImg.length > 0
@@ -136,41 +140,45 @@ export function AdminReviewList() {
       <Row className="js-reviews">
         <Col>
           <h3 className="js-section-title">리뷰</h3>
-        {loading ? (
-              <div className="text-center">
-                <div className="spinner-border" role="status">
-                  <span className="visually-hidden"></span>
-                </div>
+          {loading ? (
+            <div className="text-center">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden"></span>
               </div>
-            ) : (
-          <ListGroup>
-            {reviews.slice(0, showReviewsCount).map((review) => (
-              <ListGroup.Item key={review.reviewId} className="js-review-item">
-                <img
-                  src={
-                    reviewImages[review.reviewId]?.[0]?.imageUrl ||
-                    "https://via.placeholder.com/100x100"
-                  }
-                  alt="리뷰 이미지"
-                />
-                <div className="js-review-item-content">
-                  <p className="mb-0">
-                    <strong>{users[review.userId] || "익명"}</strong>
-                  </p>
-                  <p className="text-muted small">{formatDate(review.createdAt)}</p>
-                  <p>{review.reviewContent}</p>
-                </div>
-                <img
-                  src="/icons/xmark.svg"
-                  alt="삭제하기"
-                  onClick={() => handleDeleteClick(review.reviewId)}
-                  className="delete-button"
-                />
-              </ListGroup.Item>
-            ))}
-          </ListGroup>
-        )}
-          {reviews.length > showReviewsCount && (
+            </div>
+          ) : reviews.length > 0 ? (
+            <ListGroup>
+              {reviews.slice(0, showReviewsCount).map((review) => (
+                <ListGroup.Item key={review.reviewId} className="js-review-item">
+                  <img
+                    src={
+                      reviewImages[review.reviewId]?.[0]?.imageUrl ||
+                      "https://via.placeholder.com/100x100"
+                    }
+                    alt="리뷰 이미지"
+                  />
+                  <div className="js-review-item-content">
+                    <p className="mb-0">
+                      <strong>{users[review.userId] || "익명"}</strong>
+                    </p>
+                    <p className="text-muted small">{formatDate(review.createdAt)}</p>
+                    <p>{review.reviewContent}</p>
+                  </div>
+                  <img
+                    src="/icons/xmark.svg"
+                    alt="삭제하기"
+                    onClick={() => handleDeleteClick(review.reviewId)}
+                    className="delete-button"
+                  />
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          ) : (
+            <div className="no-data text-center mt-4">
+              <p>리뷰가 없습니다.</p>
+            </div>
+          )}
+          {reviews.length > showReviewsCount && reviews.length > 0 && (
             <Button
               variant="primary"
               onClick={handleShowMoreReviews}

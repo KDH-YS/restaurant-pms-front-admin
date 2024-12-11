@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Container, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "../../css/Review.css";
 
 function AdminReview() {
-  const [restaurants, setRestaurants] = useState([]);
+  const [restaurant, setRestaurant] = useState([]);  // 레스토랑 데이터 상태
   const [totalPages, setTotalPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const fetchRestaurants = async (page = 1, keyword = '') => {
     setLoading(true);
@@ -18,7 +20,7 @@ function AdminReview() {
       );
       if (response.ok) {
         const data = await response.json();
-        setRestaurants(data.content);
+        setRestaurant(data.content);
         setTotalPages(data.totalPages);
         setPageNumber(page); // 현재 페이지 업데이트
       } else {
@@ -37,6 +39,21 @@ function AdminReview() {
 
   const handlePageChange = (newPage) => {
     fetchRestaurants(newPage, keyword);
+  };
+
+  const handleReviewClick = (restaurantId) => {
+    if (typeof restaurantId !== 'string' && typeof restaurantId !== 'number') {
+      console.error('Invalid restaurantId:', restaurantId);
+      return;
+    }
+    navigate(`/reviewList/${restaurantId}`); // restaurantId를 경로에 포함
+  };
+  const handleReportClick = (restaurantId) => {
+    if (typeof restaurantId !== 'string' && typeof restaurantId !== 'number') {
+      console.error('Invalid restaurantId:', restaurantId);
+      return;
+    }
+    navigate(`/report/${restaurantId}`); // restaurantId를 경로에 포함
   };
 
   useEffect(() => {
@@ -81,8 +98,8 @@ function AdminReview() {
                 <div>관리</div>
               </div>
               <div className="table-body">
-                {restaurants.length > 0 ? (
-                  restaurants.map((item, index) => (
+                {restaurant.length > 0 ? (
+                  restaurant.map((item, index) => (
                     <div key={item.restaurantId} className="table-row">
                       <div>{index + 1 + (pageNumber - 1) * 20}</div>
                       <div>{item.name}</div>
@@ -90,12 +107,18 @@ function AdminReview() {
                       <div>{item.roadAddr || item.jibunAddr || 'N/A'}</div>
                       <div>{item.phone || 'N/A'}</div>
                       <div className="button-group">
-                        <Link to={`/reviewList`}>
-                          <Button variant="primary" className="mb-2">
-                            리뷰관리
-                          </Button>
-                        </Link>
-                        <Button variant="danger">신고관리</Button>
+                        <Button
+                          variant="primary"
+                          className="mb-2"
+                          onClick={() => handleReviewClick(item.restaurantId)} // 올바른 값 전달
+                        >
+                          리뷰관리
+                        </Button>
+                        <Button variant="danger"
+                          onClick={() => handleReportClick(item.restaurantId)}
+                        >
+                          신고관리
+                        </Button>
                       </div>
                     </div>
                   ))
