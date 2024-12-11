@@ -22,6 +22,9 @@
   margin-bottom: 1rem;
   position: relative;
 }
+.js-review-item:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
 .js-review-item img {
   flex-shrink: 0; /* 이미지가 작아지지 않도록 설정 */

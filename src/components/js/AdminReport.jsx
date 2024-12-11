@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Button, ListGroup, Badge } from "react-bootstrap";
+import { Container, Row, Col, Button, ListGroup, Badge, Modal } from "react-bootstrap";
 import "../../css/Report.css";
 
 import { restaurantStore } from "../../store/restaurantStore";
@@ -9,6 +9,8 @@ export function AdminReportList() {
   const [reports, setReports] = useState([]);
   const [showReportsCount, setShowReportsCount] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [reportToDelete, setReportToDelete] = useState(null);
 
   const { restaurant, setRestaurant } = restaurantStore();
   const [restaurantImg, setRestaurantImg] = useState([]);
@@ -37,7 +39,7 @@ export function AdminReportList() {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        console.log(data)
         setReports(data);
       } else {
         console.error("신고 정보를 가져오는 데 실패했습니다.");
@@ -49,11 +51,57 @@ export function AdminReportList() {
     }
   };
 
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/reports/${reportToDelete}`,
+        { method: "DELETE" }
+      );
+      if (response.ok) {
+        setReports((prevReports) =>
+          prevReports.filter((report) => report.reportId !== reportToDelete)
+        );
+        setShowDeleteModal(false);
+      } else {
+        console.error("신고 삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("신고 삭제 중 오류 발생:", error);
+    }
+  };
+
   const formatDate = (date) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
     return new Date(date).toLocaleDateString(undefined, options);
   };
 
+  const reasonToKorean = (reason) => {
+    switch (reason) {
+      case "INAPPROPRIATE":
+        return "부적절한 내용";
+      case "FAKE":
+        return "허위 정보";
+      case "OFFENSIVE":
+        return "모욕적인 내용";
+      case "OTHER":
+        return "기타";
+      default:
+        return "알 수 없음";
+    }
+  };
+  
+  const statusToKorean = (status) => {
+    switch (status) {
+      case "PENDING":
+        return "대기 중";
+      case "PROCESSED":
+        return "처리 완료";
+      case "REJECTED":
+        return "거부됨";
+      default:
+        return "알 수 없음";
+    }
+  };
   useEffect(() => {
     fetchRestaurantDetails();
     fetchReports();
@@ -91,39 +139,50 @@ export function AdminReportList() {
           ) : reports.length > 0 ? (
             <ListGroup>
               {reports.slice(0, showReportsCount).map((report) => (
-                <ListGroup.Item key={report.reportId} className="js-report-item">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <p className="mb-0">
-                        <strong>{report.user_name || "익명"}</strong>
-                      </p>
+                <ListGroup.Item
+                  key={report.reportId}
+                  className="js-report-item position-relative"
+                >
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    className="delete-button"
+                    onClick={() => {
+                      setReportToDelete(report.reportId);
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    삭제
+                  </Button>
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div style={{ width: "66%" }}>
+                      <strong>{report.user_name || "익명"}</strong>
                       <p className="text-muted small">
                         {formatDate(report.created_at)}
                       </p>
                       <p>{report.review_content || "리뷰 내용이 없습니다."}</p>
                     </div>
-                    <div className="d-flex align-items-center">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        className="me-2"
-                        disabled
-                      >
-                        {report.reason || "기타"}
-                      </Button>
-                      <Badge
-                        bg={
-                          report.status === "처리중"
-                            ? "warning"
-                            : report.status === "완료"
-                            ? "success"
-                            : "secondary"
-                        }
-                      >
-                        {report.status || "알 수 없음"}
-                      </Badge>
-                    </div>
+                    <Badge
+                      bg={
+                        report.status === "PENDING"
+                          ? "secondary"
+                          : report.status === "PROCESSED"
+                          ? "Primary"
+                          : "Warning"
+                      }
+                    >
+                      {statusToKorean(report.status)}
+                    </Badge>
                   </div>
+                  <hr />
+                  <p>
+                    <strong>신고 사유: </strong>
+                    {reasonToKorean(report.reason)}
+                  </p>
+                  <p>
+                    <strong>신고 내용: </strong>
+                    {report.report_description}
+                  </p>
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -143,6 +202,31 @@ export function AdminReportList() {
           )}
         </Col>
       </Row>
+
+      {/* 삭제 확인 모달 */}
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>신고 삭제</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          정말로 이 신고를 삭제하시겠습니까?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDeleteModal(false)}
+          >
+            취소
+          </Button>
+          <Button variant="danger" onClick={confirmDelete}>
+            삭제
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }
