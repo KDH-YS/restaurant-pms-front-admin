@@ -220,10 +220,10 @@ export function AdminReportList() {
             variant="secondary"
             onClick={() => setShowDeleteModal(false)}
           >
-            취소
+            아니요
           </Button>
           <Button variant="danger" onClick={confirmDelete}>
-            삭제
+            예
           </Button>
         </Modal.Footer>
       </Modal>
