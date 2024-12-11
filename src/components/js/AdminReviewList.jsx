@@ -131,9 +131,10 @@ export function AdminReviewList() {
             alt="Restaurant"
             className="mt-4 img-fluid rounded-circle"
           />
-          <h2>{restaurant.name}</h2>
+          <h2>{restaurant.name || "가게 정보 없음"}</h2>
           <p>
-            {restaurant.city} {restaurant.district} {restaurant.neighborhood}
+            {restaurant?.city || ""} {restaurant?.district || ""}{" "}
+            {restaurant?.neighborhood || ""}
           </p>
         </Col>
       </Row>
@@ -150,27 +151,33 @@ export function AdminReviewList() {
             <ListGroup>
               {reviews.slice(0, showReviewsCount).map((review) => (
                 <ListGroup.Item key={review.reviewId} className="js-review-item">
+                <div className="js-review-item-content" style={{ width: "66%" }}>
+                  <p className="mb-0">
+                    <strong>{users[review.userId] || "익명"}</strong>
+                  </p>
+                  <p className="text-muted small">{formatDate(review.createdAt)}</p>
                   <img
-                    src={
-                      reviewImages[review.reviewId]?.[0]?.imageUrl ||
-                      "https://via.placeholder.com/100x100"
-                    }
-                    alt="리뷰 이미지"
+                  src={
+                    reviewImages[review.reviewId]?.[0]?.imageUrl ||
+                    "https://via.placeholder.com/100x100"
+                  }
+                  alt="리뷰 이미지"
+                  className="review-image mb-2"
                   />
-                  <div className="js-review-item-content">
-                    <p className="mb-0">
-                      <strong>{users[review.userId] || "익명"}</strong>
-                    </p>
-                    <p className="text-muted small">{formatDate(review.createdAt)}</p>
-                    <p>{review.reviewContent}</p>
-                  </div>
-                  <img
-                    src="/icons/xmark.svg"
-                    alt="삭제하기"
-                    onClick={() => handleDeleteClick(review.reviewId)}
-                    className="delete-button"
-                  />
-                </ListGroup.Item>
+                  <p>{review.reviewContent}</p>
+                </div>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="delete-button"
+                  onClick={() => {
+                    setReviewToDelete(review.reviewId);
+                    setShowDeleteModal(true);
+                  }}
+                >
+                  삭제
+                </Button>
+              </ListGroup.Item>              
               ))}
             </ListGroup>
           ) : (
@@ -189,7 +196,8 @@ export function AdminReviewList() {
           )}
         </Col>
       </Row>
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}
+        centered>
         <Modal.Header closeButton>
           <Modal.Title>리뷰 삭제</Modal.Title>
         </Modal.Header>
