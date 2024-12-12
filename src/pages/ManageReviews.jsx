@@ -1,11 +1,11 @@
 import React from 'react';
+import AdminReview from '../components/js/AdminReview';
 
 const ManageReviews = () => {
   return (
-    <div className="container">
-      <h1>리뷰 관리</h1>
-      <p>리뷰 관리 내용은 여기에 표시됩니다.</p>
-    </div>
+    <>
+      <AdminReview/>
+    </>
   );
 };
 
