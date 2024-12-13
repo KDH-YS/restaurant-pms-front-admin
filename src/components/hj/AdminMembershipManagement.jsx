@@ -9,6 +9,7 @@ function AdminMembershipManagement() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedMember, setSelectedMember] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [selectedAuth, setSelectedAuth] = useState("");
 
   useEffect(() => {
     fetchMembers();
@@ -65,44 +66,20 @@ function AdminMembershipManagement() {
     }
   };
 
-  const handleStatusChange = async (event) => {
-    if (!selectedMember) return; // 선택된 회원이 없으면 함수 종료
-
-    console.log("selectedMember:", selectedMember); // 상태 확인용
-
-    const updatedMember = {
-      ...selectedMember,
-      auth: event.target.value,
-    };
-    try {
-      await axios.put(`http://localhost:8080/api/admin/membership/${selectedMember.userId}`, updatedMember);
-      setSelectedMember(updatedMember);
-      setMembers(
-        members.map((member) =>
-          member.userId === updatedMember.userId ? updatedMember : member
-        )
-      );
-    } catch (error) {
-      console.error("Error updating member status:", error);
-    }
-  };
-
   const handleUpdateMember = async () => {
     if (!selectedMember) return;
 
     console.log("selectedMember:", selectedMember); // 상태 확인용
 
-    // 현재 선택된 권한을 새 권한으로 설정
-    const updatedAuth = document.querySelector(".HjAdminMMModalContent select").value;
     // authorities 리스트를 업데이트
     const updatedAuthorities = [{
       authNo: null,
       userId: selectedMember.userId,
-      auth: updatedAuth,
+      auth: selectedAuth,
     }];
     const updatedMember = {
       ...selectedMember,
-      auth: updatedAuth,
+      auth: selectedAuth,
       authorities: updatedAuthorities,
     };
 
@@ -129,6 +106,11 @@ function AdminMembershipManagement() {
       console.error("Error updating member status: ", error);
       alert("권한 수정 중 오류가 발생했습니다.");
     }
+  };
+
+  // select 태그의 onChange 이벤트 핸들러
+  const handleAuthChange = (event) => {
+    setSelectedAuth(event.target.value);
   };
 
   // 회원 삭제
@@ -214,8 +196,8 @@ function AdminMembershipManagement() {
             <p>
               <strong>권한:</strong>
               <select
-                value={selectedMember?.auth || ""} 
-                onChange={handleStatusChange}
+                value={selectedAuth}
+                onChange={handleAuthChange}
               >
                 <option value="ROLE_ADMIN">관리자</option>
                 <option value="ROLE_OWNER">사장님</option>
