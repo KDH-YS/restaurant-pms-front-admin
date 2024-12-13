@@ -16,13 +16,15 @@ function AdminMembershipManagement() {
 
   const fetchMembers = async () => {
     try {
-      const response = await axios.get("/api/admin/membership");
+      const response = await axios.get("http://localhost:8080/api/admin/membership");
       // UserDTO를 받아서 필요한 정보만 추출
       const formattedMembers = response.data.map(user => ({
-        id: user.userName,
+        userId: user.userId,
+        userName: user.userName,
         name: user.name,
         email: user.email,
-        userType: user.userType
+        phone: user.phone,
+        auth: user.authorities && user.authorities.length > 0 ? user.authorities[0].auth : null
       }));
       setMembers(formattedMembers);
     } catch (error) {
@@ -37,15 +39,17 @@ function AdminMembershipManagement() {
   const handleSearchSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.get("/api/admin/membership", {
+      const response = await axios.get("http://localhost:8080/api/admin/membership", {
         params: { keyword: searchKeyword },
       });
       // 검색 결과도 포맷팅
       const formattedMembers = response.data.map(user => ({
-        id: user.userName,
+        userId: user.userId,
+        userName: user.userName,
         name: user.name,
         email: user.email,
-        userType: user.userType
+        phone: user.phone,
+        auth: user.authorities && user.authorities.length > 0 ? user.authorities[0].auth : null
       }));
       setMembers(formattedMembers);
     } catch (error) {
@@ -53,27 +57,29 @@ function AdminMembershipManagement() {
     }
   };
 
-  const handleMemberClick = (member) => {
-    setSelectedMember(member);
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedMember(null);
+  const handleShowModal = (userId) => {
+    const memberToUpdate = members.find(member => member.userId === userId);
+    if (memberToUpdate) {
+      setSelectedMember(memberToUpdate);
+      setShowModal(true);
+    }
   };
 
   const handleStatusChange = async (event) => {
+    if (!selectedMember) return; // 선택된 회원이 없으면 함수 종료
+
+    console.log("selectedMember:", selectedMember); // 상태 확인용
+
     const updatedMember = {
       ...selectedMember,
-      userType: event.target.value,
+      auth: event.target.value,
     };
     try {
-      await axios.put(`/api/admin/membership/${selectedMember.id}`, updatedMember);
+      await axios.put(`http://localhost:8080/api/admin/membership/${selectedMember.userId}`, updatedMember);
       setSelectedMember(updatedMember);
       setMembers(
         members.map((member) =>
-          member.id === updatedMember.id ? updatedMember : member
+          member.userId === updatedMember.userId ? updatedMember : member
         )
       );
     } catch (error) {
@@ -81,17 +87,67 @@ function AdminMembershipManagement() {
     }
   };
 
+  const handleUpdateMember = async () => {
+    if (!selectedMember) return;
+
+    console.log("selectedMember:", selectedMember); // 상태 확인용
+
+    // 현재 선택된 권한을 새 권한으로 설정
+    const updatedAuth = document.querySelector(".HjAdminMMModalContent select").value;
+    // authorities 리스트를 업데이트
+    const updatedAuthorities = [{
+      authNo: null,
+      userId: selectedMember.userId,
+      auth: updatedAuth,
+    }];
+    const updatedMember = {
+      ...selectedMember,
+      auth: updatedAuth,
+      authorities: updatedAuthorities,
+    };
+
+    console.log("updatedMember: ", updatedMember);
+
+    try {
+      await axios.put(`http://localhost:8080/api/admin/membership/${selectedMember.userId}`, updatedMember);
+
+      setMembers(prevMembers =>
+        prevMembers.map(member =>
+          member.userId === selectedMember.userId ? updatedMember : member
+        )
+      );
+
+      // 선택된 멤버 상태 업데이트
+      setSelectedMember(updatedMember);
+
+      // 모달 닫기
+      handleCloseModal();
+
+      // 권한 수정 완료 메시지
+      alert("권한이 수정되었습니다.");
+    } catch (error) {
+      console.error("Error updating member status: ", error);
+      alert("권한 수정 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 회원 삭제
   const handleDeleteMember = async () => {
-    //회원 삭제
     if (selectedMember) {
       try {
-        await axios.delete(`/api/admin/membership/${selectedMember.id}`);
-        setMembers(members.filter((member) => member.id !== selectedMember.id));
+        await axios.delete(`http://localhost:8080/api/admin/membership/${selectedMember.userId}`);
+        setMembers(members.filter((member) => member.userId !== selectedMember.userId));
         handleCloseModal();
       } catch (error) {
         console.error("Error deleting member: ", error);
       }
     }
+  };
+
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedMember(null);
   };
 
   return(
@@ -110,19 +166,32 @@ function AdminMembershipManagement() {
       <table className="HjAdminMMTable">
         <thead>
           <tr>
+            <th>Number</th>
             <th>ID</th>
             <th>이름</th>
             <th>이메일</th>
+            <th>휴대폰 번호</th>
             <th>권한</th>
+            <th>권한 수정</th>
           </tr>
         </thead>
         <tbody>
           {members.map((member) => (
-            <tr key={member.id} onClick={() => handleMemberClick(member)}>
-              <td>{member.id}</td>
+            <tr key={member.userId}>
+              <td>{member.userId}</td>
+              <td>{member.userName}</td>
               <td>{member.name}</td>
               <td>{member.email}</td>
-              <td>{member.userType}</td>
+              <td>{member.phone}</td>
+              <td>{member.auth}</td>
+              <td>
+                <button 
+                type="button" 
+                className="HjAdminMMBtn"
+                onClick={() => handleShowModal(member.userId)}>
+                  수정
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -134,22 +203,26 @@ function AdminMembershipManagement() {
           <div className="HjAdminMMModalContent">
             <h2>{selectedMember.name}</h2>
             <p>
-              <strong>ID:</strong> {selectedMember.id}
+              <strong>ID:</strong> {selectedMember.userId}
             </p>
             <p>
               <strong>이메일:</strong> {selectedMember.email}
             </p>
             <p>
-              <strong>상태:</strong>
+              <strong>휴대폰 번호:</strong> {selectedMember.phone}
+            </p>
+            <p>
+              <strong>권한:</strong>
               <select
-                value={selectedMember.userType}
+                value={selectedMember?.auth || ""} 
                 onChange={handleStatusChange}
               >
-                <option value="CUSTOMER">관리자</option>
-                <option value="OWNER">사장님</option>
-                <option value="USER">일반회원</option>
+                <option value="ROLE_ADMIN">관리자</option>
+                <option value="ROLE_OWNER">사장님</option>
+                <option value="ROLE_USER">일반회원</option>
               </select>
             </p>
+            <button onClick={handleUpdateMember}>수정</button>
             <button onClick={handleDeleteMember}>회원 삭제</button>
             <button onClick={handleCloseModal}>닫기</button>
           </div>
