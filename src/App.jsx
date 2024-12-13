@@ -12,6 +12,9 @@ import Reservationlistpage from 'pages/ReservationListpage';
 import 'admin-lte/dist/css/adminlte.min.css';
 import AdminReviewList from './components/js/AdminReviewList';
 import AdminReport from './components/js/AdminReport';
+import AdminRestaurantTable from './components/jh/AdminRestaurantTable';
+import Update from './components/jh/Update';
+import AddRestaurant from './components/jh/Add';
 
 function App() {
   return (
@@ -22,7 +25,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/manage-users" element={<ManageUsers />} />
-            <Route path="/manage-restaurants" element={<ManageRestaurants />} />
+            <Route path="/manage-restaurants" element={<AdminRestaurantTable />} />
             <Route path="/manage-reservations" element={<ManageReservations />} />
             <Route path="/manage-reviews" element={<ManageReviews />} />
             <Route path="/reviewList/:restaurantId" element={<AdminReviewList />} />
@@ -30,6 +33,8 @@ function App() {
             <Route path="/manage-reports" element={<ManageReports />} />
             <Route path="/manage-boards" element={<ManageBoards />} />
             <Route path="/manager-reservations/reservations" element={<Reservationlistpage />} />
+            <Route path="/restaurant/update/:restaurantId" element={<Update/>}></Route>
+            <Route path="/restaurant/add" element={<AddRestaurant/>}></Route>
           </Routes>
         </div>
       </div>
