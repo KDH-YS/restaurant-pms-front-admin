@@ -148,8 +148,9 @@ function AdminMembershipManagement() {
       <table className="HjAdminMMTable">
         <thead>
           <tr>
-            <th>Number</th>
-            <th>ID</th>
+            <th>번호</th>
+            <th>유저 번호</th>
+            <th>아이디</th>
             <th>이름</th>
             <th>이메일</th>
             <th>휴대폰 번호</th>
@@ -158,8 +159,9 @@ function AdminMembershipManagement() {
           </tr>
         </thead>
         <tbody>
-          {members.map((member) => (
+          {members.map((member, index) => (
             <tr key={member.userId}>
+              <td>{index + 1}</td>
               <td>{member.userId}</td>
               <td>{member.userName}</td>
               <td>{member.name}</td>
