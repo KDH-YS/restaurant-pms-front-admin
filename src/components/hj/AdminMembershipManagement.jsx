@@ -25,6 +25,7 @@ function AdminMembershipManagement() {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        restaurantName: user.restaurantName || "없음",
         auth: user.authorities && user.authorities.length > 0 ? user.authorities[0].auth : null
       }));
       setMembers(formattedMembers);
@@ -50,6 +51,7 @@ function AdminMembershipManagement() {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        restaurantName: user.restaurantName || "없음",
         auth: user.authorities && user.authorities.length > 0 ? user.authorities[0].auth : null
       }));
       setMembers(formattedMembers);
@@ -148,12 +150,13 @@ function AdminMembershipManagement() {
       <table className="HjAdminMMTable">
         <thead>
           <tr>
-            <th>번호</th>
+            <th>순번</th>
             <th>유저 번호</th>
             <th>아이디</th>
-            <th>이름</th>
+            <th>닉네임</th>
             <th>이메일</th>
             <th>휴대폰 번호</th>
+            <th>보유 레스토랑</th>
             <th>권한</th>
             <th>권한 수정</th>
           </tr>
@@ -167,6 +170,7 @@ function AdminMembershipManagement() {
               <td>{member.name}</td>
               <td>{member.email}</td>
               <td>{member.phone}</td>
+              <td>{member.restaurantName}</td>
               <td>{member.auth}</td>
               <td>
                 <button 
