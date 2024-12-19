@@ -27,10 +27,6 @@ body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-side
   body.sidebar-collapsed .main-sidebar {
     margin-left: -250px; /* 사이드바 숨김 */
   }
-
-  body.sidebar-collapsed .content-wrapper {
-    margin-left: 0; /* 콘텐츠 확장 */
-  }
 }
 
 /* 반응형: 992px 이상 */
