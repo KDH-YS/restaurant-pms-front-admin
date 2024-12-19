@@ -24,6 +24,7 @@ const ReservationList = () => {
         `http://localhost:8080/api/reservations/manager/${restaurant.restaurantId}?page=${currentPage}&size=${itemsPerPage}`
       );
       const data = await response.json();
+      console.log(data)
       setReservations(data.list);
       setTotalPages(Math.ceil(data.total / itemsPerPage));
     } catch (error) {
@@ -79,7 +80,7 @@ const ReservationList = () => {
     PENDING: '결제 대기중',
     NOSHOW: '노쇼',
   };
-
+console.log(reservations)
   return (
     <Container className="mt-4">
       <h1 className="mb-4">{restaurant.name} 예약 관리</h1>
@@ -106,9 +107,10 @@ const ReservationList = () => {
             reservations.map((reservation) => (
               <tr key={reservation.reservationId}>
                 <td>{reservation.reservationId}</td>
-                <td>{reservation.user.email}</td>
+                <td>{reservation.user?.email || 'N/A'}</td>
+                <td>{reservation.user?.name || 'N/A'}</td>
                 <td>{reservation.reservationTime}</td>
-                <td>{reservation.user.phone}</td>
+                <td>{reservation.user?.phone || 'N/A'}</td>
                 <td>{reservation.numberOfPeople}</td>
                 <td>{statusLabels[reservation.status]}</td>
                 <td>
