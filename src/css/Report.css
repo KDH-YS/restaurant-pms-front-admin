@@ -1,0 +1,30 @@
+.js-report-item {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.js-report-item:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.js-report-item .delete-button {
+  position: absolute;
+  top: 10px; /* 상단 여백 */
+  right: 10px; /* 오른쪽 여백 */
+  z-index: 10;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.js-report-item .badge {
+  box-sizing: border-box;
+  padding: 10px;
+  position: absolute;
+  height: 31px;
+  top: 10px; /* 배지가 삭제 버튼과 겹치지 않도록 간격 추가 */
+  right: 65px; /* 오른쪽 정렬 */
+  display: inline-block;
+}
