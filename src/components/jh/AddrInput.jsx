@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button, Modal, Form, InputGroup, FormControl } from 'react-bootstrap'; // named import
+import { Button, Modal, Form, InputGroup, FormControl, Col, Row } from 'react-bootstrap'; // named import
 import DaumPostcode from 'react-daum-postcode';  // 올바른 import 확인
 
 const AddrInput = ({ address,setAddressData }) => {
@@ -83,67 +83,87 @@ const [isOpenAddr, setIsOpenAddr] = useState(false); // 모달 상태
 
     return (
         <div>
-            {/* 우편번호 입력 필드 */}
+         <Form>
+        <Row className="mb-3">
+          {/* 우편번호 입력 필드 */}
+          <Col md={6} sm={6}>
             <Form.Group controlId="zonecode">
-                <Form.Label>우편번호</Form.Label>
-                <InputGroup className="mb-3">
-                    <FormControl
-                        value={postalCode}
-                        readOnly
-                        placeholder="우편번호"
-                        aria-label="우편번호"
-                    />
-                        <Button variant="outline-secondary" onClick={handleOpenAddr}>
-                            검색
-                        </Button>
-                </InputGroup>
+              <Form.Label>우편번호</Form.Label>
+              <InputGroup>
+                <FormControl
+                  value={postalCode}
+                  readOnly
+                  placeholder="우편번호"
+                  aria-label="우편번호"
+                />
+                <Button variant="outline-secondary" onClick={handleOpenAddr}>
+                  검색
+                </Button>
+              </InputGroup>
             </Form.Group>
+          </Col>
+        </Row>
 
-            {/* 주소 입력 필드 */}
+        <Row className="mb-3">
+          {/* 도로명 주소 입력 필드 */}
+          <Col md={6} sm={6}>
             <Form.Group controlId="address_kakao">
-                <Form.Label>도로명 주소</Form.Label>
-                <FormControl
-                    value={roadAddr}
-                    readOnly
-                    placeholder="도로명 주소"
-                />
-               <Form.Label>지번 주소</Form.Label>
-                <FormControl 
-                    value={jibunAddr}
-                    readOnly
-                    placeholder="지번 주소"
-                />
+              <Form.Label>도로명 주소</Form.Label>
+              <FormControl
+                value={roadAddr}
+                readOnly
+                placeholder="도로명 주소"
+              />
             </Form.Group>
+          </Col>
 
-            {/* 모달에서 주소 검색 */}
-            {isOpenAddr && (
-                <Modal
-                    show={isOpenAddr}
-                    onHide={handleOpenAddr} // 모달 닫기
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title>주소 검색</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <DaumPostcode
-                            theme={themeObj}
-                            style={style}
-                            onComplete={selectAddr}
-                            autoClose={false} // 값 선택 시 모달 자동 닫힘 방지
-                        />
-                    </Modal.Body>
-                </Modal>
-            )}
+          {/* 지번 주소 입력 필드 */}
+          <Col md={6} sm={6}>
+            <Form.Group controlId="address_kakao">
+              <Form.Label>지번 주소</Form.Label>
+              <FormControl
+                value={jibunAddr}
+                readOnly
+                placeholder="지번 주소"
+              />
+            </Form.Group>
+          </Col>
+        </Row>
 
-            {/* 상세 주소 입력 필드 */}
+        {/* 모달에서 주소 검색 */}
+        {isOpenAddr && (
+          <Modal
+            show={isOpenAddr}
+            onHide={handleOpenAddr} // 모달 닫기
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>주소 검색</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <DaumPostcode
+                theme={themeObj}
+                style={style}
+                onComplete={selectAddr}
+                autoClose={false} // 값 선택 시 모달 자동 닫힘 방지
+              />
+            </Modal.Body>
+          </Modal>
+        )}
+
+        <Row className="mb-3">
+          {/* 상세 주소 입력 필드 */}
+          <Col md={12} sm={12}>
             <Form.Group controlId="detailAddress">
-                <Form.Label>상세 주소</Form.Label>
-                <FormControl
-                    value={detailAddr}
-                    onChange={(e) => setDetailAddr(e.target.value)}
-                    placeholder="상세 주소"
-                />
+              <Form.Label>상세 주소</Form.Label>
+              <FormControl
+                value={detailAddr}
+                onChange={(e) => setDetailAddr(e.target.value)}
+                placeholder="상세 주소"
+              />
             </Form.Group>
+          </Col>
+        </Row>
+      </Form>
         </div>
     );
 };

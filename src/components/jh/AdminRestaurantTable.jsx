@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Container } from 'react-bootstrap';  // Modal 추가
+import { Table, Button, Modal, Form, Container, Row, Col } from 'react-bootstrap';  // Modal 추가
 import { deleteImage, deleteMenu, fetchRestaurantMenu, fetchRestaurants, getRestaurantImages, insertImage, insertMenu, searchRestaurants, setMainImage } from './api.js';
 import { deleteRestaurant } from './api.js';
 import Pagination from './Pagination';
@@ -29,11 +29,12 @@ const AdminRestaurantTable = () => {
     size: 24,
   });
   const [totalRestaurants, setTotalRestaurants] = useState(0);  // 총 레스토랑 수 상태
+  const [searchTotal, setSearchTotal] = useState(0);  // 총 레스토랑 수 상태
   const navigate = useNavigate();
   const [menu, setMenu] = useState([]);  // 새 메뉴 입력 상태
   const [newMenu, setNewMenu] = useState({ name: '', price: '' }); // 새로운 메뉴 객체
   const [imageFile, setImageFile] = useState(null); // 이미지 파일 상태
-  const [imageOrder, setImageOrder] = useState(false); // 이미지 순서 (기본 false로 설정)
+  const [imageOrder, setImageOrder] = useState(true); // 이미지 순서 (기본 false로 설정)
   const [imagePreview, setImagePreview] = useState(''); // 이미지 미리보기 URL 상태
   // 현재 선택된 대표 이미지 ID
   const [selectedMainImageId, setSelectedMainImageId] = useState(null);
@@ -49,6 +50,7 @@ const AdminRestaurantTable = () => {
         setRestaurants(response.content);
         setTotalPages(response.totalPages);
         setTotalRestaurants(response.totalElements);  // 전체 레스토랑 수 업데이트
+        setSearchTotal(response.totalElements);  // 전체 레스토랑 수 업데이트
 
       } else {
         setRestaurants([]);
@@ -173,6 +175,8 @@ const AdminRestaurantTable = () => {
 
 // 페이지 변경 시 호출되는 함수
 const handlePageChange = async (page) => {
+  if(page === currentPage) return;
+
   setCurrentPage(page); // 현재 페이지 업데이트
   // 페이지네이션 후 스크롤을 맨 위로 이동
   window.scrollTo(0, 0);
@@ -305,6 +309,14 @@ const handleDeleteImage = async (imageId) => {
     }));
   };
 
+
+  const handleFilterToggle = (filter) => {
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      [filter]: prevParams[filter] ? false : true,  // 기존 값이 true면 false로, 아니면 true로 변경
+    }));
+  };
+
   // 레스토랑 검색 API
 const handleSearch = async (page = 1) => {
 
@@ -349,9 +361,11 @@ const handleSearch = async (page = 1) => {
     if (response.content) {
       setRestaurants(response.content);  // 검색된 레스토랑 목록 업데이트
       setTotalPages(response.totalPages);  // 총 페이지 수 설정
+      setSearchTotal(response.totalElements);  // 전체 레스토랑 수 업데이트
     } else {
       setRestaurants([]);
       setTotalPages(1);
+      setSearchTotal(0);
     }
   } catch (err) {
     console.error('검색 오류:', err);
@@ -360,6 +374,25 @@ const handleSearch = async (page = 1) => {
     setLoading(false);  // 로딩 종료
   }
 };
+
+  // 전체 목록 보기
+  const handleViewAll = () => {
+     setSearchParams({
+      query: '',
+      searchOption: 'name',
+      name: '',
+      city: '',
+      district: '',
+      neighborhood: '',
+      foodType: '',
+      parkingAvailable: false,
+      reservationAvailable: false,
+      page: 1,
+      size: 24,
+    });
+    setCurrentPage(1);
+    fetchRestaurantsData(1);
+  };
 
 // 이미지 클릭 시 대표 이미지로 설정
 const handleSetAsMainImage = async (imageId) => {
@@ -401,14 +434,40 @@ const handleSetAsMainImage = async (imageId) => {
 const renderImageList = () => {
   return selectedRestaurant?.images && selectedRestaurant.images.length > 0 ? (
     selectedRestaurant.images.map((image) => (
-      <li key={image.imageId}>
-        <img
-          src={image.imageUrl}
-          alt="이미지"
-          style={{ maxWidth: '100px', marginRight: '10px', cursor: 'pointer' }}
-          onClick={() => handleSetAsMainImage(image.imageId)}  // 클릭하면 대표 이미지로 설정
-        />
-        {image.imageOrder && <span>대표 이미지</span>} {/* 대표 이미지 표시 */}
+      <li key={image.imageId} style={{ display: 'inline-block', marginRight: '10px' }}>
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <img
+            src={image.imageUrl}
+            alt="이미지"
+            style={{
+              maxWidth: '100px',
+              marginRight: '10px',
+              cursor: 'pointer',
+              border: image.imageOrder ? '3px solid #007bff' : 'none', // 대표 이미지일 경우 파란 테두리
+              borderRadius: '5px',  // 이미지 모서리 둥글게 처리 (옵션)
+            }}
+            onClick={() => handleSetAsMainImage(image.imageId)}  // 클릭하면 대표 이미지로 설정
+          />
+          
+          {/* 대표 이미지일 경우 뱃지 추가 */}
+          {image.imageOrder && (
+            <span
+              style={{
+                position: 'absolute',
+                top: '0px',
+                left: '0px',
+                backgroundColor: '#007bff',
+                color: '#fff',
+                padding: '3px 5px',
+                borderRadius: '5px',
+                fontSize: '10px',
+                fontWeight: 'bold',
+              }}
+            >
+              대표 이미지
+            </span>
+          )}
+        </div>
         <Button
           variant="danger"
           size="sm"
@@ -425,18 +484,26 @@ const renderImageList = () => {
 
   return (
     <Container>
-      <h2>레스토랑 목록</h2>
-       {/* 총 레스토랑 수 표시 */}
-    <div className="mb-3">
-      <strong>총 레스토랑 수: {totalRestaurants}개</strong>
-    </div>
+      {/* <h2>레스토랑 목록</h2> */}
 
       <SearchBar
        searchParams={searchParams}
        handleInputChange={handleInputChange}
-       handleCheckboxChange={handleCheckboxChange}
+       handleFilterToggle={handleFilterToggle}
        handleSearch={handleSearch}
       />
+       <div className="mb-3">
+      <strong>등록 된 전체 레스토랑 {totalRestaurants}개</strong>
+    </div>
+      <Row className="align-items-center mt-4">
+        
+        <Col><div className="mb-3">
+      <strong>'{searchParams.query || '전체'}' {searchTotal}개의 레스토랑</strong>
+    </div></Col>
+        <Col className="d-flex justify-content-end mb-3">
+          <Button variant="secondary" onClick={handleViewAll}>전체 목록 보기</Button>
+        </Col>
+      </Row>
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -488,9 +555,19 @@ const renderImageList = () => {
             <p><strong>주소:</strong> {selectedRestaurant.roadAddr || selectedRestaurant.jibunAddr} {selectedRestaurant.detailAddr}</p>
             <p><strong>음식 종류:</strong> {selectedRestaurant.foodType}</p>
             <p><strong>전화번호:</strong> {selectedRestaurant.phone}</p>
-            <p><strong>주차 가능:</strong> {selectedRestaurant.parkingAvailable ? '가능' : '불가능'}</p>
-            <p><strong>예약 가능:</strong> {selectedRestaurant.reservationAvailable ? '가능' : '불가능'}</p>
-          {/* 이미지 업로드 폼 */}
+           <div className='mb-3'>
+            <span 
+              style={{marginRight:'10px'}}
+              className={`badge ${selectedRestaurant.reservationAvailable ? 'bg-primary' : 'bg-danger'} px-2 py-2`}
+            >
+              {selectedRestaurant.reservationAvailable ? '예약가능' : '예약불가'}
+            </span>
+            <span 
+                className={`badge ${selectedRestaurant.parkingAvailable ? 'bg-primary' : 'bg-danger'} px-2 py-2`}
+              >
+                {selectedRestaurant.parkingAvailable ? '주차가능' : '주차불가'}
+              </span>
+            </div>
           <Form>
               <Form.Group>
                 <Form.Label>이미지 파일</Form.Label>
@@ -505,13 +582,13 @@ const renderImageList = () => {
                   <img src={imagePreview} alt="미리보기" style={{ maxWidth: '200px', maxHeight: '200px' }} />
                 </div>
               )}
-              <Form.Check
+              {/* <Form.Check
                 type="checkbox"
                 label="첫 번째 이미지로 설정"
                 checked={imageOrder}
                 onChange={(e) => setImageOrder(e.target.checked)}
                 className="mt-3"
-              />
+              /> */}
               <Button variant="success" onClick={handleImageUpload} className="mt-3">
                 이미지 업로드
               </Button>
@@ -525,19 +602,29 @@ const renderImageList = () => {
 
 
             {/* 메뉴 추가 폼 */}
-            <Form.Control
+            <Row>
+              <Col>
+              <Form.Control
               type="text"
-              placeholder="메뉴 이름을 입력하세요"
+              placeholder="메뉴 명"
               value={newMenu.name}
               onChange={(e) => setNewMenu({ ...newMenu, name: e.target.value })}
             />
-            <Form.Control
+              </Col>
+              <Col>
+              <Form.Control
               type="number"
-              placeholder="메뉴 가격을 입력하세요"
+              placeholder="메뉴 가격"
               value={newMenu.price}
               onChange={(e) => setNewMenu({ ...newMenu, price: e.target.value })}
             />
-            <Button variant="success" onClick={handleAddMenu}>메뉴 추가</Button>
+              </Col>
+              <Col>
+              <Button variant="success" onClick={handleAddMenu}>추가</Button>
+              </Col>
+            </Row>
+            
+           
 
             <h5 className="mt-3">메뉴 리스트</h5>
             <ul>

@@ -22,7 +22,7 @@ const AddRestaurant = () => {
     phone: '',
     foodType: '',
     totalSeats: '',
-    parkingAvailable: false,
+    parkingAvailable: null,
   });
   const [phoneError, setPhoneError] = useState(null); // 전화번호 형식 오류 상태
 
@@ -107,13 +107,13 @@ const AddRestaurant = () => {
 
     
   return (
-    <Container className="my-5">
+    <Container className="my-5" style={{ padding:'0 30px', maxWidth: '850px' }}> 
       <h2>새로운 레스토랑 추가</h2>
       <Form onSubmit={handleSubmit}>
         <Row>
-          <Col md={6}>
+          <Col md={6} xs={6}>
             <Form.Group controlId="name">
-              <Form.Label>가게 이름</Form.Label>
+              <Form.Label>가게 명</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
@@ -123,11 +123,7 @@ const AddRestaurant = () => {
               />
             </Form.Group>
           </Col>
-         
-        </Row>
-
-        <Row className="my-3">
-          <Col md={6}>
+          <Col md={6} xs={6}>
             <Form.Group controlId="phone">
               <Form.Label>전화번호</Form.Label>
               <Form.Control
@@ -141,7 +137,17 @@ const AddRestaurant = () => {
               {phoneError && <div className="text-danger">{phoneError}</div>} {/* 오류 메시지 표시 */}
             </Form.Group>
           </Col>
-          <Col md={6}>
+        </Row>
+        {/* 주소!! */}
+        <Row className="my-3">
+        <Col md={12}>
+            <Form.Group controlId="address">
+                <AddrInput setAddressData={setAddressData}/>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Row className="my-3">
+          <Col md={5}  xs={5}>
             <Form.Group controlId="foodType">
               <Form.Label>음식 종류</Form.Label>
               <Form.Control
@@ -163,10 +169,7 @@ const AddRestaurant = () => {
               </Form.Control>
             </Form.Group>
           </Col>
-        </Row>
-
-        <Row className="my-3">
-          <Col md={6}>
+          <Col md={2} xs={2}>
             <Form.Group controlId="totalSeats">
               <Form.Label>좌석 수</Form.Label>
               <Form.Control
@@ -177,29 +180,48 @@ const AddRestaurant = () => {
               />
             </Form.Group>
           </Col>
-          <Col md={6}>
-            <Form.Group controlId="parkingAvailable">
-              <Form.Check
-                type="checkbox"
-                name="parkingAvailable"
-                label="주차 가능"
-                checked={restaurant.parkingAvailable}
-                onChange={(e) =>
-                  handleChange({
-                    target: { name: 'parkingAvailable', value: e.target.checked },
-                  })
+          <Col md={5}  xs={5}>
+          <Form.Group controlId="parkingAvailable">
+          <Form.Label>주차 가능 여부</Form.Label>
+          <div className="d-flex">
+            {/* 주차 가능 버튼 */}
+            <Button
+              variant={restaurant.parkingAvailable ? 'success' : 'outline-success'}
+              onClick={() =>
+                handleChange({
+                  target: { name: 'parkingAvailable', value: true },
+                })
+              }
+              className="me-2"
+            >
+              가능
+            </Button>
+
+            {/* 주차 불가 버튼 */}
+            <Button
+                variant={
+                  restaurant.parkingAvailable === false
+                    ? 'danger'
+                    : restaurant.parkingAvailable === null
+                    ? 'outline-danger' // null일 때는 비활성화된 버튼
+                    : 'outline-danger'
                 }
-              />
-            </Form.Group>
+              onClick={() =>
+                handleChange({
+                  target: { name: 'parkingAvailable', value: false },
+                })
+              }
+            >
+              불가
+            </Button>
+          </div>
+          </Form.Group>
           </Col>
         </Row>
-        <Col md={6}>
-            <Form.Group controlId="address">
-                <AddrInput setAddressData={setAddressData}/>
-            </Form.Group>
-          </Col>
+
+        
         <Row className="my-3">
-          <Col md={12}>
+          <Col md={12} xs={12}>
             <Form.Group controlId="description">
               <Form.Label>가게 설명</Form.Label>
               <Form.Control
