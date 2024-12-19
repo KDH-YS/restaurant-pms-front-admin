@@ -81,137 +81,137 @@ const ReservationList = () => {
     NOSHOW: '노쇼',
   };
 console.log(reservations)
-  return (
-    <Container className="mt-4">
-      <h1 className="mb-4">{restaurant.name} 예약 관리</h1>
-      <Table striped bordered hover>
-        <thead>
+return (
+  <Container className="mt-4">
+    <h1 className="mb-4">{restaurant.name} 예약 관리</h1>
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>예약 번호</th>
+          <th>이메일</th>
+          <th>이름</th>
+          <th>날짜</th>
+          <th>연락처</th>
+          <th>인원</th>
+          <th>상태</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody>
+        {reservations.length === 0 ? (
           <tr>
-            <th>예약 번호</th>
-            <th>이메일</th>
-            <th>날짜</th>
-            <th>연락처</th>
-            <th>인원</th>
-            <th>상태</th>
-            <th>관리</th>
+            <td colSpan="8" className="text-center">
+              현재 예약이 없습니다.
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {reservations.length === 0 ? (
-            <tr>
-              <td colSpan="7" className="text-center">
-                현재 예약이 없습니다.
+        ) : (
+          reservations.map((reservation) => (
+            <tr key={reservation.reservationId}>
+              <td>{reservation.reservationId}</td>
+              <td>{reservation.user?.email || 'N/A'}</td>
+              <td>{reservation.user?.name || 'N/A'}</td>
+              <td>{reservation.reservationTime}</td>
+              <td>{reservation.user?.phone || 'N/A'}</td>
+              <td>{reservation.numberOfPeople}</td>
+              <td>{statusLabels[reservation.status]}</td>
+              <td>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => handleEdit(reservation)}
+                >
+                  수정
+                </Button>{' '}
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => handleDelete(reservation.reservationId)}
+                >
+                  삭제
+                </Button>
               </td>
             </tr>
-          ) : (
-            reservations.map((reservation) => (
-              <tr key={reservation.reservationId}>
-                <td>{reservation.reservationId}</td>
-                <td>{reservation.user?.email || 'N/A'}</td>
-                <td>{reservation.user?.name || 'N/A'}</td>
-                <td>{reservation.reservationTime}</td>
-                <td>{reservation.user?.phone || 'N/A'}</td>
-                <td>{reservation.numberOfPeople}</td>
-                <td>{statusLabels[reservation.status]}</td>
-                <td>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => handleEdit(reservation)}
-                  >
-                    수정
-                  </Button>{' '}
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDelete(reservation.reservationId)}
-                  >
-                    삭제
-                  </Button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </Table>
-      <PaginationComponent onPageChange={handlePageChange} />
+          ))
+        )}
+      </tbody>
+    </Table>
+    <PaginationComponent onPageChange={handlePageChange} />
 
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>예약 수정</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>상태</Form.Label>
-              <Form.Control
-                type="text"
-                value={editingReservation?.status || ''}
-                onChange={(e) =>
-                  setEditingReservation({
-                    ...editingReservation,
-                    status: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>요청사항</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={editingReservation?.request || ''}
-                onChange={(e) =>
-                  setEditingReservation({
-                    ...editingReservation,
-                    request: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>예약 시간</Form.Label>
-              <Form.Control
-                type="datetime-local"
-                value={
-                  editingReservation?.reservationTime
-                    ? editingReservation.reservationTime.slice(0, 16)
-                    : ''
-                }
-                onChange={(e) =>
-                  setEditingReservation({
-                    ...editingReservation,
-                    reservationTime: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>인원</Form.Label>
-              <Form.Control
-                type="number"
-                value={editingReservation?.numberOfPeople || ''}
-                onChange={(e) =>
-                  setEditingReservation({
-                    ...editingReservation,
-                    numberOfPeople: parseInt(e.target.value),
-                  })
-                }
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            취소
-          </Button>
-          <Button variant="primary" onClick={handleSaveEdit}>
-            저장
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
-  );
+    <Modal show={showModal} onHide={handleCloseModal} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>예약 수정</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group className="mb-3">
+            <Form.Label>상태</Form.Label>
+            <Form.Control
+              type="text"
+              value={editingReservation?.status || ''}
+              onChange={(e) =>
+                setEditingReservation({
+                  ...editingReservation,
+                  status: e.target.value,
+                })
+              }
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>요청사항</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={editingReservation?.request || ''}
+              onChange={(e) =>
+                setEditingReservation({
+                  ...editingReservation,
+                  request: e.target.value,
+                })
+              }
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>예약 시간</Form.Label>
+            <Form.Control
+              type="datetime-local"
+              value={
+                editingReservation?.reservationTime
+                  ? editingReservation.reservationTime.slice(0, 16)
+                  : ''
+              }
+              onChange={(e) =>
+                setEditingReservation({
+                  ...editingReservation,
+                  reservationTime: e.target.value,
+                })
+              }
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>인원</Form.Label>
+            <Form.Control
+              type="number"
+              value={editingReservation?.numberOfPeople || ''}
+              onChange={(e) =>
+                setEditingReservation({
+                  ...editingReservation,
+                  numberOfPeople: parseInt(e.target.value, 10),
+                })
+              }
+            />
+          </Form.Group>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleCloseModal}>
+          취소
+        </Button>
+        <Button variant="primary" onClick={handleSaveEdit}>
+          저장
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  </Container>
+);
 };
-
 export default ReservationList;
