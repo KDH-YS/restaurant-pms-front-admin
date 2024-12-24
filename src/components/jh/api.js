@@ -19,7 +19,7 @@ export const fetchRestaurants = async (page = 1, size = 24) => {
 export const searchRestaurants = async (searchParams) => {
   try {
     // query가 존재하면 전체 검색을, 없으면 일반 검색을 처리
-    const endpoint = `${BASE_URL}/restaurant/search`;
+    const endpoint = `${apiUrl}/api/restaurant/search`;
 
     const response = await axios.get(endpoint, {
       params: searchParams,  // 검색 조건을 params로 전달
