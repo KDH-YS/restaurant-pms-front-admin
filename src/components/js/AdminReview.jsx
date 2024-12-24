@@ -16,12 +16,13 @@ function AdminReview() {
   const [isHighOrder, setIsHighOrder] = useState(true); // true: 내림차순, false: 오름차순
 
   const navigate = useNavigate();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
   const fetchRestaurants = async (page = 1, keyword = '', order = 'desc') => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/restaurant?page=${page}&size=20&keyword=${keyword}&order=${order}`
+        `${apiUrl}/api/restaurant?page=${page}&size=20&keyword=${keyword}&order=${order}`
       );
       if (response.ok) {
         const data = await response.json();

@@ -18,12 +18,13 @@ export function AdminReviewList() {
 
   const { restaurant, setRestaurant } = restaurantStore();
   const { restaurantId } = useParams();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
   const fetchRestaurantDetails = async () => {
     if (restaurantId) {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/restaurants/${restaurantId}`
+          `${apiUrl}/api/restaurants/${restaurantId}`
         );
         if (response.ok) {
           const data = await response.json();
@@ -41,7 +42,7 @@ export function AdminReviewList() {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8080/api/restaurants/${restaurantId}/reviews?userId=1`
+          `${apiUrl}/api/restaurants/${restaurantId}/reviews?userId=1`
         );
         if (response.ok) {
           const data = await response.json();
@@ -65,7 +66,7 @@ export function AdminReviewList() {
     if (restaurantId) {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/js/users/${restaurantId}`
+          `${apiUrl}/api/js/users/${restaurantId}`
         );
         if (response.ok) {
           const data = await response.json();
@@ -93,7 +94,7 @@ export function AdminReviewList() {
   const confirmDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reviews/${reviewToDelete}`,
+        `${apiUrl}/api/reviews/${reviewToDelete}`,
         { method: "DELETE" }
       );
       if (response.ok) {

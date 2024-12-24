@@ -12,10 +12,12 @@ const AdminReserve = () => {
   const itemsPerPage = 8;
   const itemsPerGroup = 40;
   const {setRestaurant} = restaurantStore();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
+
   const fetchRestaurants = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/restaurants?name=${searchTerm}&page=${pageGroup}&size=${itemsPerGroup}`
+        `${apiUrl}/api/restaurants?name=${searchTerm}&page=${pageGroup}&size=${itemsPerGroup}`
       );
       const data = await response.json();
       setRestaurants(data.list);

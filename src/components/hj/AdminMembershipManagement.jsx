@@ -10,6 +10,7 @@ function AdminMembershipManagement() {
   const [selectedMember, setSelectedMember] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedAuth, setSelectedAuth] = useState("");
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
     fetchMembers();
@@ -17,7 +18,7 @@ function AdminMembershipManagement() {
 
   const fetchMembers = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/admin/membership");
+      const response = await axios.get(`${apiUrl}/api/admin/membership`);
       // UserDTO를 받아서 필요한 정보만 추출
       const formattedMembers = response.data.map(user => ({
         userId: user.userId,
@@ -41,7 +42,7 @@ function AdminMembershipManagement() {
   const handleSearchSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.get("http://localhost:8080/api/admin/membership", {
+      const response = await axios.get(`"${apiUrl}/api/admin/membership`, {
         params: { keyword: searchKeyword },
       });
       // 검색 결과도 포맷팅
@@ -88,7 +89,7 @@ function AdminMembershipManagement() {
     console.log("updatedMember: ", updatedMember);
 
     try {
-      await axios.put(`http://localhost:8080/api/admin/membership/${selectedMember.userId}`, updatedMember);
+      await axios.put(`${apiUrl}/api/admin/membership/${selectedMember.userId}`, updatedMember);
 
       setMembers(prevMembers =>
         prevMembers.map(member =>
@@ -119,7 +120,7 @@ function AdminMembershipManagement() {
   const handleDeleteMember = async () => {
     if (selectedMember) {
       try {
-        await axios.delete(`http://localhost:8080/api/admin/membership/${selectedMember.userId}`);
+        await axios.delete(`${apiUrl}/api/admin/membership/${selectedMember.userId}`);
         setMembers(members.filter((member) => member.userId !== selectedMember.userId));
         handleCloseModal();
       } catch (error) {

@@ -9,6 +9,7 @@ const ReservationList = () => {
   const { currentPage, setCurrentPage, setTotalPages } = usePaginationStore();
   const itemsPerPage = 10;
   const { restaurant } = restaurantStore();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
   // 모달 관련 상태
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +22,7 @@ const ReservationList = () => {
   const fetchReservations = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reservations/manager/${restaurant.restaurantId}?page=${currentPage}&size=${itemsPerPage}`
+        `${apiUrl}/api/reservations/manager/${restaurant.restaurantId}?page=${currentPage}&size=${itemsPerPage}`
       );
       const data = await response.json();
       console.log(data)
@@ -40,7 +41,7 @@ const ReservationList = () => {
   const handleDelete = async (reservationId) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reservations/manager/${reservationId}`,
+        `${apiUrl}/api/reservations/manager/${reservationId}`,
         {
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },

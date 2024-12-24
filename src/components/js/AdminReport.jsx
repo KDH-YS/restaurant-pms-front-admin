@@ -15,11 +15,12 @@ export function AdminReportList() {
   const { restaurant, setRestaurant } = restaurantStore();
   const [restaurantImg, setRestaurantImg] = useState([]);
   const { restaurantId } = useParams();
+  const apiUrl = process.env.REACT_APP_API_BASE_URL;
 
   const fetchRestaurantDetails = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/restaurants/${restaurantId}`
+        `${apiUrl}/api/restaurants/${restaurantId}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -35,7 +36,7 @@ export function AdminReportList() {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:8080/api/js/reports/${restaurantId}`
+        `${apiUrl}/api/js/reports/${restaurantId}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -54,7 +55,7 @@ export function AdminReportList() {
   const confirmDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/reports/${reportToDelete}`,
+        `${apiUrl}/api/reports/${reportToDelete}`,
         { method: "DELETE" }
       );
       if (response.ok) {
