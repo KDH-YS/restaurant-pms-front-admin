@@ -3,6 +3,7 @@ import { Table, Button, Container, Modal, Form } from 'react-bootstrap';
 import PaginationComponent from 'components/PaginationComponent';
 import usePaginationStore from 'store/usePaginationStore';
 import { restaurantStore } from 'store/restaurantStore';
+import axios from 'axios';
 
 const ReservationList = () => {
   const [reservations, setReservations] = useState([]);
@@ -10,11 +11,12 @@ const ReservationList = () => {
   const itemsPerPage = 10;
   const { restaurant } = restaurantStore();
   const apiUrl = process.env.REACT_APP_API_BASE_URL;
+  const token = sessionStorage.getItem('token');
 
   // 모달 관련 상태
   const [showModal, setShowModal] = useState(false);
   const [editingReservation, setEditingReservation] = useState(null);
-
+  
   useEffect(() => {
     fetchReservations();
   }, [restaurant.restaurantId, currentPage]);
@@ -44,7 +46,9 @@ const ReservationList = () => {
         `${apiUrl}/api/reservations/manager/${reservationId}`,
         {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json' },
         }
       );
 
@@ -69,9 +73,30 @@ const ReservationList = () => {
     setEditingReservation(null);
   };
 
-  const handleSaveEdit = () => {
-    console.log('수정된 예약:', editingReservation);
-    handleCloseModal();
+  const handleSaveEdit = async () => {
+    try {
+      // 예약 데이터를 객체 형태로 준비
+      const updatedReservation = {
+        reservationId: editingReservation?.reservationId, // 수정하려는 예약의 ID
+        status: editingReservation?.status,
+        request: editingReservation?.request,
+        reservationTime: editingReservation?.reservationTime,
+        numberOfPeople: editingReservation?.numberOfPeople,
+      };
+      
+      // PUT 요청 보내기
+      const response = await axios.put(`${apiUrl}/api/reservations`, updatedReservation);
+  
+      // 성공적으로 업데이트된 경우
+      console.log('Reservation updated successfully:', response.data);
+  
+      // 모달 닫기
+      handleCloseModal();
+    } catch (error) {
+      // 에러 처리
+      console.error('Error updating reservation:', error);
+      alert('예약 업데이트 중 오류가 발생했습니다.');
+    }
   };
 
   const statusLabels = {
