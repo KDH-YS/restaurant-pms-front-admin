@@ -1,9 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // React Router를 사용하여 페이지 이동을 처리
 import '../css/App.css'; // 스타일 적용
 
-const Sidebar = () => {
+const Sidebar = () => { // React Router의 useNavigate 훅 사용
+  const [isTokenValid, setIsTokenValid] = useState(null); // 토큰 유효성 체크 상태
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = sessionStorage.getItem('token') || urlParams.get('token');
+
+    if (token) {
+      // 세션 스토리지에 토큰 저장
+      setIsTokenValid(true);
+      sessionStorage.setItem('token', token);
+      console.log('토큰이 세션에 저장되었습니다:', token);
+       // 토큰이 유효하면 상태 업데이트
+    } else {
+      console.log("리렌더링 횟수");
+      // 토큰이 없으면 리다이렉션
+      window.location.href = 'http://localhost:3001';
+      setIsTokenValid(false); // 토큰이 없으면 상태 업데이트
+    }
+  }, []);
+
+  // 토큰 유효성 검사 완료되기 전에 렌더링되지 않도록
+  if (isTokenValid === null) {
+    return null; // 상태 값이 결정되기 전에는 아무것도 렌더링하지 않음
+  }
+
   return (
+        
+    isTokenValid ? (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       {/* 브랜드 링크 */}
       <a href="/" className="brand-link">
@@ -71,7 +98,7 @@ const Sidebar = () => {
           </ul>
         </nav>
       </div>
-    </aside>
+    </aside>) : null // 
   );
 };
 
