@@ -19,7 +19,7 @@ const ReservationList = () => {
   
   useEffect(() => {
     fetchReservations();
-  }, [restaurant.restaurantId, currentPage]);
+  }, [restaurant.restaurantId]);
 
   const fetchReservations = async () => {
     try {

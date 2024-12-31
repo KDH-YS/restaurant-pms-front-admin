@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // React Router를 사용하여 페이지 이동을 처리
 import '../css/App.css'; // 스타일 적용
+import tokenStore from 'store/tokenStore';
 
 const Sidebar = () => { // React Router의 useNavigate 훅 사용
-  const [isTokenValid, setIsTokenValid] = useState(null); // 토큰 유효성 체크 상태
+  const {isTokenValid, setIsTokenValid} = tokenStore(); // 토큰 유효성 체크 상태
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -18,7 +19,7 @@ const Sidebar = () => { // React Router의 useNavigate 훅 사용
     } else {
       console.log("리렌더링 횟수");
       // 토큰이 없으면 리다이렉션
-      window.location.href = 'http://localhost:3001';
+      window.location.href = 'http://localhost:3000';
       setIsTokenValid(false); // 토큰이 없으면 상태 업데이트
     }
   }, []);
