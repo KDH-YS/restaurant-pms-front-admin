@@ -7,8 +7,9 @@ import axios from 'axios';
 
 const ReservationList = () => {
   const [reservations, setReservations] = useState([]);
-  const { currentPage, setCurrentPage, setTotalPages } = usePaginationStore();
-  const itemsPerPage = 10;
+  const { currentPage, setCurrentPage, setTotalPages,pageGroup } = usePaginationStore();
+  const itemsPerPage = 8;
+  const itemsPerGroup = 40;
   const { restaurant } = restaurantStore();
   const apiUrl = process.env.REACT_APP_API_BASE_URL;
   const token = sessionStorage.getItem('token');
@@ -19,12 +20,12 @@ const ReservationList = () => {
   
   useEffect(() => {
     fetchReservations();
-  }, [restaurant.restaurantId]);
+  }, [restaurant.restaurantId,pageGroup]);
 
   const fetchReservations = async () => {
     try {
       const response = await fetch(
-        `${apiUrl}/api/reservations/manager/${restaurant.restaurantId}?page=${currentPage}&size=${itemsPerPage}`
+        `${apiUrl}/api/reservations/manager/${restaurant.restaurantId}?page=${pageGroup}&size=${itemsPerGroup}`
       );
       const data = await response.json();
       console.log(data)
@@ -121,6 +122,11 @@ const ReservationList = () => {
     NOSHOW: '노쇼',
   };
 console.log(reservations)
+
+const currentReservations = reservations.slice(
+  ((currentPage - 1) % 5) * itemsPerPage, 
+  ((currentPage - 1) % 5 + 1) * itemsPerPage
+);
 return (
   <Container className="mt-4">
     <h1 className="mb-4">{restaurant.name} 예약 관리</h1>
@@ -145,7 +151,7 @@ return (
             </td>
           </tr>
         ) : (
-          reservations.map((reservation) => (
+          currentReservations.map((reservation) => (
             <tr key={reservation.reservationId}>
               <td>{reservation.reservationId}</td>
               <td>{reservation.user?.email || 'N/A'}</td>
