@@ -42,7 +42,7 @@ function AdminMembershipManagement() {
   const handleSearchSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.get(`"${apiUrl}/api/admin/membership`, {
+      const response = await axios.get(`${apiUrl}/api/admin/membership`, {
         params: { keyword: searchKeyword },
       });
       // 검색 결과도 포맷팅

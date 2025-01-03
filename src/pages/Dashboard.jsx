@@ -1,12 +1,12 @@
 import React from 'react';
-
+import tokenStore from 'store/tokenStore';
+import AdminDashboard from 'components/dh/AdminDashboard';
 const Dashboard = () => {
-
+  const {isTokenValid} = tokenStore();
   return (
-    <div className="container">
-      <h1>대시보드</h1>
-      <p>대시보드 내용은 여기에 표시됩니다.</p>
-    </div>
+    isTokenValid? (
+      <AdminDashboard/>
+    ) : null
   );
 };
 
