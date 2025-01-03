@@ -91,11 +91,12 @@ const Sidebar = () => { // React Router의 useNavigate 훅 사용
             </li>
             {/* 위젯 */}
             <li className="nav-item">
-              <Link to="/manage-boards" className="nav-link">
-                <i className="nav-icon fas fa-th" />
-                <p>게시판 관리</p>
-              </Link>
-            </li>
+  <a href="https://restaurant-pms-front-user.vercel.app/" className="nav-link" target="_blank" rel="noopener noreferrer">
+    <i className="nav-icon fas fa-th" />
+    <p>홈페이지로</p>
+  </a>
+</li>
+
           </ul>
         </nav>
       </div>
