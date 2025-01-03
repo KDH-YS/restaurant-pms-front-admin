@@ -19,11 +19,7 @@ const Sidebar = () => { // React Router의 useNavigate 훅 사용
     } else {
       console.log("리렌더링 횟수");
       // 토큰이 없으면 리다이렉션
-<<<<<<< HEAD
-      window.location.href = 'http://206.189.35.254:8183';
-=======
       window.location.href = 'https://restaurant-pms-front-user.vercel.app/';
->>>>>>> dev
       setIsTokenValid(false); // 토큰이 없으면 상태 업데이트
     }
   }, []);
